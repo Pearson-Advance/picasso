@@ -95,7 +95,7 @@ jobs:
         working-directory: ${{ github.workspace }}
         env:
           REQUIRED_KEYS: TUTOR_VERSION
-          OPTIONAL_KEYS: DOCKER_REGISTRY, ENABLE_DYNAMIC_IMAGE_TAG, REGISTRY_EDXAPP_REPOSITORY_PATH
+          OPTIONAL_KEYS: DOCKER_REGISTRY ENABLE_DYNAMIC_IMAGE_TAG REGISTRY_EDXAPP_REPOSITORY_PATH
           CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
           SCRIPT_PATH: picasso/.github/workflows/scripts/get_tutor_config.py
         run: |
@@ -136,7 +136,7 @@ jobs:
         env:
           TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
         run: |
-          if [ -z "$DOCKER_REGISTRY" ] || [ -z "$REGISTRY_OPENEDX_REPOSITORY_PATH" ]; then
+          if [ -z "$DOCKER_REGISTRY" ] || [ -z "$REGISTRY_EDXAPP_REPOSITORY_PATH" ]; then
             echo "Error: Missing required environment variables for setting the image tag."
             exit 1
           fi

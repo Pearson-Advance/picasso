@@ -139,8 +139,10 @@ jobs:
         run: |
           if [ "$SERVICE" = "openedx" ]; then
             REPO_PATH="openedx/edxapp-tutor"
+            echo "$REPO_PATH" >> $GITHUB_ENV
           else
             REPO_PATH="tutor-${SERVICE}/${SERVICE}-tutor"
+            echo "$REPO_PATH" >> $GITHUB_ENV
           fi
 
           tutor config save --set \

@@ -131,19 +131,18 @@ jobs:
         with:
           format: YYYY-MM-DD-HH-mm
 
-      - name: Set openedx image tag
-        if: ${{ env.ENABLE_DYNAMIC_IMAGE_TAG && env.ENABLE_DYNAMIC_IMAGE_TAG == 'true' }}
+      - name: Set docker image tag based on service
+        if: ${{ env.ENABLE_DYNAMIC_IMAGE_TAG == 'true' && env.DOCKER_REGISTRY}}
         env:
+          SERVICE: ${{ inputs.SERVICE }}
           TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
+          REPO_PATH: tutor-${SERVICE}/${SERVICE}-tutor
         run: |
-          if [ -z "$DOCKER_REGISTRY" ] || [ -z "$REGISTRY_EDXAPP_REPOSITORY_PATH" ]; then
-            echo "Error: Missing required environment variables for setting the image tag."
-            exit 1
+          if [ "$SERVICE" = "openedx" ]; then
+            REPO_PATH="tutor-${SERVICE}/edxapp-tutor"
           fi
-          DOCKER_IMAGE_OPENEDX="${DOCKER_REGISTRY}/${REGISTRY_EDXAPP_REPOSITORY_PATH}:${TUTOR_VERSION#v}-${TIMESTAMP}"
-          echo "Generated DOCKER_IMAGE_OPENEDX: $DOCKER_IMAGE_OPENEDX"
 
-          tutor config save --set DOCKER_IMAGE_OPENEDX=$DOCKER_IMAGE_OPENEDX
+          tutor config save --set "DOCKER_IMAGE_${SERVICE^^}"="${DOCKER_REGISTRY}/${REPO_PATH}:${TUTOR_VERSION#v}-${TIMESTAMP}"
 
       - name: Limit build parallelism to decrease resource usage
         if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}

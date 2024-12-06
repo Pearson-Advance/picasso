@@ -95,7 +95,7 @@ jobs:
         working-directory: ${{ github.workspace }}
         env:
           REQUIRED_KEYS: TUTOR_VERSION
-          OPTIONAL_KEYS: DOCKER_REGISTRY
+          OPTIONAL_KEYS: DOCKER_REGISTRY, ENABLE_DYNAMIC_IMAGE_TAG, REGISTRY_EDXAPP_REPOSITORY_PATH
           CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
           SCRIPT_PATH: picasso/.github/workflows/scripts/get_tutor_config.py
         run: |
@@ -124,6 +124,26 @@ jobs:
       - name: Execute extra commands
         run: |
           tutor picasso run-extra-commands
+
+      - name: Get current time
+        uses: josStorer/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYY-MM-DD-HH-mm
+
+      - name: Set openedx image tag
+        if: ${{ env.ENABLE_DYNAMIC_IMAGE_TAG && env.ENABLE_DYNAMIC_IMAGE_TAG == 'true' }}
+        env:
+          TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
+        run: |
+          if [ -z "$DOCKER_REGISTRY" ] || [ -z "$REGISTRY_OPENEDX_REPOSITORY_PATH" ]; then
+            echo "Error: Missing required environment variables for setting the image tag."
+            exit 1
+          fi
+          DOCKER_IMAGE_OPENEDX="${DOCKER_REGISTRY}/${REGISTRY_OPENEDX_REPOSITORY_PATH}:${TUTOR_VERSION}-${TIMESTAMP}"
+          echo "Generated DOCKER_IMAGE_OPENEDX: $DOCKER_IMAGE_OPENEDX"
+
+          tutor config save --set DOCKER_IMAGE_OPENEDX=$DOCKER_IMAGE_OPENEDX
 
       - name: Limit build parallelism to decrease resource usage
         if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}

@@ -138,11 +138,10 @@ jobs:
           TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
         run: |
           if [ "$SERVICE" = "openedx" ]; then
-            REPO_PATH="tutor-openedx/edxapp-tutor"
+            echo "REPO_PATH=tutor-openedx/edxapp-tutor" >> $GITHUB_ENV
           else
-            REPO_PATH="tutor-openedx/${SERVICE}-tutor"
+            echo "REPO_PATH=tutor-openedx/${SERVICE}-tutor" >> $GITHUB_ENV
           fi
-          echo "$REPO_PATH" >> $GITHUB_ENV
 
           tutor config save --set \
           "DOCKER_IMAGE_${SERVICE^^}"="${DOCKER_REGISTRY}/${REPO_PATH}:${TUTOR_VERSION#v}-${TIMESTAMP}"

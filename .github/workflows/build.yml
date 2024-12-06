@@ -146,7 +146,7 @@ jobs:
           fi
 
           tutor config save --set \
-          $DOCKER_IMAGE="${DOCKER_REGISTRY}/${REPO_PATH}:${TUTOR_VERSION#v}-${TIMESTAMP}"
+          "${DOCKER_IMAGE}"="${DOCKER_REGISTRY}/${REPO_PATH}:${TUTOR_VERSION#v}-${TIMESTAMP}"
 
       - name: Limit build parallelism to decrease resource usage
         if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}

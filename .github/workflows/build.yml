@@ -138,13 +138,15 @@ jobs:
           TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
         run: |
           if [ "$SERVICE" = "openedx" ]; then
+            echo "DOCKER_IMAGE=DOCKER_IMAGE_${SERVICE^^}" >> $GITHUB_ENV
             echo "REPO_PATH=tutor-openedx/edxapp-tutor" >> $GITHUB_ENV
           else
+            echo "DOCKER_IMAGE=${SERVICE^^}_DOCKER_IMAGE" >> $GITHUB_ENV
             echo "REPO_PATH=tutor-openedx/${SERVICE}-tutor" >> $GITHUB_ENV
           fi
 
           tutor config save --set \
-          "DOCKER_IMAGE_${SERVICE^^}"="${DOCKER_REGISTRY}/${REPO_PATH}:${TUTOR_VERSION#v}-${TIMESTAMP}"
+          $DOCKER_IMAGE="${DOCKER_REGISTRY}/${REPO_PATH}:${TUTOR_VERSION#v}-${TIMESTAMP}"
 
       - name: Limit build parallelism to decrease resource usage
         if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}

@@ -95,7 +95,7 @@ jobs:
         working-directory: ${{ github.workspace }}
         env:
           REQUIRED_KEYS: TUTOR_VERSION
-          OPTIONAL_KEYS: DOCKER_REGISTRY ENABLE_DYNAMIC_IMAGE_TAG REGISTRY_EDXAPP_REPOSITORY_PATH
+          OPTIONAL_KEYS: DOCKER_REGISTRY ENABLE_DYNAMIC_IMAGE_TAG
           CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
           SCRIPT_PATH: picasso/.github/workflows/scripts/get_tutor_config.py
         run: |

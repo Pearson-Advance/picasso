@@ -140,7 +140,7 @@ jobs:
             echo "Error: Missing required environment variables for setting the image tag."
             exit 1
           fi
-          DOCKER_IMAGE_OPENEDX="${DOCKER_REGISTRY}/${REGISTRY_OPENEDX_REPOSITORY_PATH}:${TUTOR_VERSION}-${TIMESTAMP}"
+          DOCKER_IMAGE_OPENEDX="${DOCKER_REGISTRY}/${REGISTRY_OPENEDX_REPOSITORY_PATH}:${TUTOR_VERSION#v}-${TIMESTAMP}"
           echo "Generated DOCKER_IMAGE_OPENEDX: $DOCKER_IMAGE_OPENEDX"
 
           tutor config save --set DOCKER_IMAGE_OPENEDX=$DOCKER_IMAGE_OPENEDX

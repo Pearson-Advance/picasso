@@ -142,7 +142,8 @@ jobs:
             REPO_PATH="tutor-${SERVICE}/edxapp-tutor"
           fi
 
-          tutor config save --set "DOCKER_IMAGE_${SERVICE^^}"="${DOCKER_REGISTRY}/${REPO_PATH}:${TUTOR_VERSION#v}-${TIMESTAMP}"
+          tutor config save --set \
+          "DOCKER_IMAGE_${SERVICE^^}"="${DOCKER_REGISTRY}/${REPO_PATH}:${TUTOR_VERSION#v}-${TIMESTAMP}"
 
       - name: Limit build parallelism to decrease resource usage
         if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}

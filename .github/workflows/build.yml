@@ -136,10 +136,11 @@ jobs:
         env:
           SERVICE: ${{ inputs.SERVICE }}
           TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
-          REPO_PATH: tutor-${SERVICE}/${SERVICE}-tutor
         run: |
           if [ "$SERVICE" = "openedx" ]; then
-            REPO_PATH="tutor-${SERVICE}/edxapp-tutor"
+            REPO_PATH="openedx/edxapp-tutor"
+          else
+            REPO_PATH="tutor-${SERVICE}/${SERVICE}-tutor"
           fi
 
           tutor config save --set \

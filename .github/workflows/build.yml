@@ -86,8 +86,8 @@ jobs:
   
       - name: Start resource monitoring
         run: |
-          echo "=== Iniciando monitoreo en segundo plano ==="
-          while true; do
+          echo "=== Iniciando monitoreo en los logs ==="
+          nohup bash -c 'while true; do
             echo "=== Estado de Recursos ==="
             vmstat
             echo "=== Espacio en disco ==="
@@ -95,7 +95,7 @@ jobs:
             echo "=== Memoria disponible ==="
             free -h
             sleep 10
-          done
+          done' &
 
       - name: Setup Python
         uses: actions/setup-python@v5

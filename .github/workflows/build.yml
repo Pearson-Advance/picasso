@@ -194,11 +194,6 @@ jobs:
 
           tutor config save
           (tutor images build $SERVICE --no-cache 2>&1) | tee $LOGS_FILE_PATH
-      
-      - name: Stop monitoring
-        run: |
-          echo "=== Deteniendo monitoreo ==="
-          pkill -f "bash -c while true"
 
       - name: Scan build logs for potential errors in the image
         working-directory: ${{ github.workspace }}

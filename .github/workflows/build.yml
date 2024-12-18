@@ -153,7 +153,7 @@ jobs:
         if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}
         run: |
           echo "[worker.oci]
-          max-parallelism = 3" > buildkit.toml
+          max-parallelism = 1" > buildkit.toml
           docker buildx create --use --node=limitparallelsteps --driver=docker-container --config=./buildkit.toml
 
       - name: Configure AWS credentials

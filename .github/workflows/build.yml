@@ -66,6 +66,11 @@ jobs:
       TUTOR_PLUGINS_ROOT: ${{ github.workspace }}/strains/${{ inputs.STRAIN_PATH }}/plugins
 
     steps:
+      - name: Monitor system metrics
+        uses: Datalust/system-metrics-action@v1
+        with:
+          frequency: 10 # Collect metrics every 10 seconds
+
       - name: Checkout Picasso repository for utility scripts
         uses: actions/checkout@v4
         with:

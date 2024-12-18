@@ -66,22 +66,6 @@ jobs:
       TUTOR_PLUGINS_ROOT: ${{ github.workspace }}/strains/${{ inputs.STRAIN_PATH }}/plugins
 
     steps:
-      - name: Install monitoring tools
-        run: sudo apt-get update && sudo apt-get install -y sysstat
-
-      - name: Start resource monitoring
-        run: |
-          echo "=== Iniciando monitoreo en segundo plano ==="
-          nohup bash -c 'while true; do
-            echo "=== Estado de Recursos ==="
-            vmstat
-            echo "=== Espacio en disco ==="
-            df -h
-            echo "=== Memoria disponible ==="
-            free -h
-            sleep 10
-          done' > resource_usage.log 2>&1 &
-
       - name: Checkout Picasso repository for utility scripts
         uses: actions/checkout@v4
         with:
@@ -96,6 +80,22 @@ jobs:
           ref: ${{ inputs.STRAIN_REPOSITORY_BRANCH }}
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           path: strains
+
+      - name: Install monitoring tools
+        run: sudo apt-get update && sudo apt-get install -y sysstat
+  
+      - name: Start resource monitoring
+        run: |
+          echo "=== Iniciando monitoreo en segundo plano ==="
+          nohup bash -c 'while true; do
+            echo "=== Estado de Recursos ==="
+            vmstat
+            echo "=== Espacio en disco ==="
+            df -h
+            echo "=== Memoria disponible ==="
+            free -h
+            sleep 10
+          done' > resource_usage.log 2>&1 &
 
       - name: Setup Python
         uses: actions/setup-python@v5

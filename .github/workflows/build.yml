@@ -141,13 +141,13 @@ jobs:
           TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
         run: |
           if [ "$SERVICE" = "openedx" ]; then
-            export DOCKER_IMAGE="DOCKER_IMAGE_${SERVICE^^}"
-            export REPO_PATH="tutor-openedx/edxapp-tutor"
+            DOCKER_IMAGE="DOCKER_IMAGE_${SERVICE^^}"
+            REPO_PATH="tutor-openedx/edxapp-tutor"
           else
-            export DOCKER_IMAGE="${SERVICE^^}_DOCKER_IMAGE"
-            export REPO_PATH="tutor-openedx/${SERVICE}-tutor"
+            DOCKER_IMAGE="${SERVICE^^}_DOCKER_IMAGE"
+            REPO_PATH="tutor-openedx/${SERVICE}-tutor"
           fi
-          tutor config save --set $DOCKER_IMAGE="${DOCKER_REGISTRY}/${REPO_PATH}:${TUTOR_VERSION#v}-${TIMESTAMP}"
+          tutor config save --set "${DOCKER_IMAGE}"="${DOCKER_REGISTRY}/${REPO_PATH}:${TUTOR_VERSION#v}-${TIMESTAMP}"
 
       - name: Limit build parallelism to decrease resource usage
         if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}

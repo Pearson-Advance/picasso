@@ -150,7 +150,7 @@ jobs:
           tutor config save --set "${DOCKER_IMAGE}"="${DOCKER_REGISTRY}/${REPO_PATH}:${TUTOR_VERSION#v}-${TIMESTAMP}"
 
       - name: Limit build parallelism to decrease resource usage
-        if: ${{ inputs.BUILDKIT_MAX_PARALLELISM }}
+        if: ${{ inputs.BUILDKIT_MAX_PARALLELISM > 0 }}
         run: |
           echo "[worker.oci]
           max-parallelism = ${{ inputs.BUILDKIT_MAX_PARALLELISM }}" > buildkit.toml

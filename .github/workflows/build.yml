@@ -81,6 +81,13 @@ jobs:
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           path: strains
 
+      - name: Print runner host and instance ID
+        run: |
+          echo "🏷 Hostname: $(hostname)"
+          echo "🔁 Runner name: $RUNNER_TRACKING_ID"
+        env:
+          RUNNER_TRACKING_ID: ${{ runner.name }}
+
       - name: Install monitoring tools
         run: sudo apt-get update && sudo apt-get install -y sysstat
 
@@ -176,11 +183,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Build service image with no cache
+      - name: Build service image with no cache (capture error but continue)
         env:
           SERVICE: ${{ inputs.SERVICE }}
           LOGS_FILE_PATH: /tmp/build_logs.out
         run: |
+          set +e
           echo "=== Iniciando monitoreo en segundo plano ==="
           while true; do
             echo "=== Estado de Recursos ==="
@@ -191,9 +199,31 @@ jobs:
             free -h
             sleep 15
           done &
+          MONITOR_PID=$!
 
           tutor config save
           (tutor images build $SERVICE --no-cache 2>&1) | tee $LOGS_FILE_PATH
+          BUILD_EXIT_CODE=$?
+
+          echo "🔴 Build exit code: $BUILD_EXIT_CODE"
+          echo "build_failed=$([ $BUILD_EXIT_CODE -ne 0 ] && echo true || echo false)" >> $GITHUB_ENV
+
+          kill $MONITOR_PID
+          set -e
+
+      - name: Snapshot after build (export check)
+        if: always()
+        run: |
+          echo "📦 Snapshot post-build"
+          echo "⏱ Tiempo actual: $(date)"
+          echo "🧠 Memoria:"
+          free -h
+          echo "💾 Espacio en disco:"
+          df -h
+          echo "🐳 Info Docker:"
+          docker info || true
+          echo "📦 Imágenes construidas:"
+          docker images || true
 
       - name: Scan build logs for potential errors in the image
         working-directory: ${{ github.workspace }}
@@ -204,6 +234,7 @@ jobs:
           python $SCRIPT_PATH $LOGS_FILE_PATH
 
       - name: Push service image to registry
+        if: env.build_failed == 'false'
         env:
           SERVICE: ${{ inputs.SERVICE }}
         run: |

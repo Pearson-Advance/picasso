@@ -23,7 +23,7 @@ Key features of the Picasso Workflow include:
 - **Builds and pushes Docker images**: The workflow pushes images to Dockerhub by default. This can be customized to push images to other registries.
 - **Supports multiple services**: You can specify the service to build (e.g., ``openedx``, ``mfe``, ``codejail``, etc.) using the ``SERVICE`` input.
 - **Customizable repository and strain**: The workflow allows for specifying the repository, branch, and path to the strain being built. This enables building images from different configurations.
-- **Configurable BuildKit parallelism**: By default, the workflow limits parallelism during the build process to optimize resource usage, although this can be changed using the ``ENABLE_LIMIT_BUILDKIT_PARALLELISM`` input. This is useful for low-powered machines, like `Github Actions standard runners`_.
+- **Configurable BuildKit parallelism**: By default, the workflow limits parallelism during the build process to optimize resource usage, although this can be changed using the ``BUILDKIT_MAX_PARALLELISM`` input. This is useful for low-powered machines, like `Github Actions standard runners`_.
 - **Private repository access**: SSH keys are used to clone private repositories securely. The SSH private key should be stored as a secret in the repository, and must have access to the repository specified in ``STRAIN_REPOSITORY``.
 - **Extra commands**: The workflow allows running additional custom commands with ``tutor picasso run-extra-commands``. For details, refer to the `tutor-contrib-picasso`_ documentation.
 - **Environment setup**: The workflow sets up and configures Tutor Virtual Environments (TVM), installs necessary plugins like ``tutor-contrib-picasso``, and prepares the environment to build and push Docker images using the `Tutor CLI`_.
@@ -84,9 +84,9 @@ Before using the workflow, ensure that you have set up the following configurati
      - The service name to build, e.g., ``openedx``. This can be any service recognized by the tutor ecosystem.
      - string
      - Input
-   * - ENABLE_LIMIT_BUILDKIT_PARALLELISM (Optional)
-     - Enables limiting parallelism with buildkit to decrease resource consumption for those setups with low-powered machines. Default is ``true``.
-     - boolean
+   * - BUILDKIT_MAX_PARALLELISM (Optional)
+     - Configure the maximum parallelism for your builds. Default is ``0`` (no limit).
+     - number
      - Input
 
 Usage
@@ -115,6 +115,17 @@ To use the Picasso Workflow, follow these steps:
 2. Modify the ``STRAIN_REPOSITORY``, ``STRAIN_REPOSITORY_BRANCH``, ``STRAIN_PATH``, and ``SERVICE`` inputs to match your project requirements.
 
 3. You can also set up a custom trigger for the workflow based on your project requirements.
+
+..
+
+    **Note**
+
+    When attempting to build an MFE image it might be possible to exhaust the resources
+    on the GitHub runner. You can specify a lower value of ``BUILDKIT_MAX_PARALLELISM``
+    to reduce the amount of resources used, if that isn't enough you can use a
+    different runner.
+
+.. _large runner: https://docs.github.com/en/actions/using-github-hosted-runners/using-larger-runners
 
 Getting Help
 ************

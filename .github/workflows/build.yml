@@ -104,7 +104,7 @@ jobs:
       - name: Checkout Picasso repository for utility scripts
         uses: actions/checkout@v4
         with:
-          repository: edunext/picasso
+          repository: Pearson-Advance/picasso
           ref: ${{ inputs.PICASSO_VERSION }}
           path: picasso
 

@@ -7,6 +7,7 @@ Keys:
     - "aspects-superset": Superset-based reporting container
     - "discovery": Discovery service
     - "ecommerce": Ecommerce service
+    - "ecommerce-worker": Ecommerce worker service
 
 Values:
     Environment variable names used to specify Docker images for each service.
@@ -17,4 +18,5 @@ service_tag_map = {
   "aspects-superset": "DOCKER_IMAGE_SUPERSET",
   "discovery": "DISCOVERY_DOCKER_IMAGE",
   "ecommerce": "ECOMMERCE_DOCKER_IMAGE",
+  "ecommerce-worker": "ECOMMERCE_WORKER_DOCKER_IMAGE",
 }

@@ -5,6 +5,8 @@ Keys:
     - "openedx": Open edX platform container
     - "mfe": Micro-frontend container
     - "aspects-superset": Superset-based reporting container
+    - "discovery": Discovery service
+    - "ecommerce": Ecommerce service
 
 Values:
     Environment variable names used to specify Docker images for each service.
@@ -12,5 +14,7 @@ Values:
 service_tag_map = {
   "openedx": "DOCKER_IMAGE_OPENEDX",
   "mfe": "MFE_DOCKER_IMAGE",
-  "aspects-superset": "DOCKER_IMAGE_SUPERSET"
+  "aspects-superset": "DOCKER_IMAGE_SUPERSET",
+  "discovery": "DISCOVERY_DOCKER_IMAGE",
+  "ecommerce": "ECOMMERCE_DOCKER_IMAGE",
 }

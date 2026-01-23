@@ -49,6 +49,9 @@ on:
       SSH_PRIVATE_KEY:
         description: 'Service user SSH key for repository checkout'
         required: true
+      SSH_DEPLOY_PRIVATE_KEY:
+        description: 'Service user deploy SSH key for repository checkout'
+        required: true  
       AWS_ACCESS_KEY_ID:
         description: 'AWS access key ID'
         required: false
@@ -120,61 +123,26 @@ jobs:
       - name: Setup SSH agent for private repositories cloning
         uses: webfactory/ssh-agent@v0.9.0
         with:
-            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+            ssh-private-key: |
+              ${{ secrets.SSH_DEPLOY_PRIVATE_KEY }}
 
       - name: Add GitHub to known hosts
         run: |
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Execute extra commands
+      - name: Clone private repositories
         run: |
-          tutor picasso run-extra-commands
-
-      - name: Limit build parallelism to decrease resource usage
-        if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}
+          git clone git@github.com:MAAngamarca/manifests-cotopaxi.git
+          git clone git@github.com:MAAngamarca/manifests-rebecca.git
+          git clone git@github.com:Pearson-VUE/certprep-manifests-cotopaxi.git
+          echo "Repos clonados exitosamente:"
+          ls -la
+      - name: Verify cloned repos
         run: |
-          echo "[worker.oci]
-          max-parallelism = 3" > buildkit.toml
-          docker buildx create --use --node=limitparallelsteps --driver=docker-container --config=./buildkit.toml
-
-      - name: Configure AWS credentials
-        if: ${{ contains(env.DOCKER_REGISTRY, 'aws') }}
-        uses: aws-actions/configure-aws-credentials@v4
-        id: login-ecr
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Login to AWS ECR if Docker registry is AWS
-        if: ${{ contains(env.DOCKER_REGISTRY, 'aws') }}
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Login to DockerHub if Docker registry is DockerHub or not set
-        if: ${{ env.DOCKER_REGISTRY == null || contains(env.DOCKER_REGISTRY, 'docker.io') }}
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-      - name: Build service image with no cache
-        env:
-          SERVICE: ${{ inputs.SERVICE }}
-          LOGS_FILE_PATH: /tmp/build_logs.out
-        run: |
-          tutor config save
-          (tutor images build $SERVICE --no-cache 2>&1) | tee $LOGS_FILE_PATH
-
-      - name: Scan build logs for potential errors in the image
-        working-directory: ${{ github.workspace }}
-        env:
-          SCRIPT_PATH: picasso/.github/workflows/scripts/identify_silent_errors.py
-          LOGS_FILE_PATH: /tmp/build_logs.out
-        run: |
-          python $SCRIPT_PATH $LOGS_FILE_PATH
-
-      - name: Push service image to registry
-        env:
-          SERVICE: ${{ inputs.SERVICE }}
-        run: |
-          tutor images push $SERVICE
+          echo "Contenido de repo1:"
+          ls -la manifests-cotopaxi/
+          
+          echo "Contenido de repo2:"
+          ls -la manifests-rebecca/
+          echo "Contenido de repo3:"
+          ls -la certprep-manifests-cotopaxi/

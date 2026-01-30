@@ -8,6 +8,7 @@ Keys:
     - "discovery": Discovery service
     - "ecommerce": Ecommerce service
     - "ecommerce-worker": Ecommerce worker service
+    - "enterprise-catalog": Enterprise catalog service
 
 Values:
     Environment variable names used to specify Docker images for each service.
@@ -19,4 +20,5 @@ service_tag_map = {
   "discovery": "DISCOVERY_DOCKER_IMAGE",
   "ecommerce": "ECOMMERCE_DOCKER_IMAGE",
   "ecommerce-worker": "ECOMMERCE_WORKER_DOCKER_IMAGE",
+  "enterprise-catalog": "ENTERPRISE_CATALOG_DOCKER_IMAGE",
 }

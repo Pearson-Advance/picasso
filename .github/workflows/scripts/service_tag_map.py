@@ -15,6 +15,7 @@ Values:
 """
 service_tag_map = {
   "openedx": "DOCKER_IMAGE_OPENEDX",
+  "openedx-dev": "DOCKER_IMAGE_OPENEDX_DEV",
   "mfe": "MFE_DOCKER_IMAGE",
   "aspects-superset": "DOCKER_IMAGE_SUPERSET",
   "discovery": "DISCOVERY_DOCKER_IMAGE",

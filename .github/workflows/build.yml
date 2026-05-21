@@ -239,7 +239,38 @@ jobs:
         env:
           SERVICE: ${{ inputs.SERVICE }}
         run: |
-          tutor images push $SERVICE
+          set -euo pipefail
+
+          if [ -z "${SERVICE:-}" ]; then
+            echo "SERVICE is empty"
+            exit 1
+          fi
+
+          case "$SERVICE" in
+            openedx-dev)
+              echo "Service '$SERVICE' is buildable in Tutor but not pushable by default."
+              echo "Resolving image tag from Tutor config..."
+
+              IMAGE_TAG="$(tutor images printtag "$SERVICE" | tail -n 1 | tr -d '\r')"
+
+              if [ -z "$IMAGE_TAG" ]; then
+                echo "Could not resolve Docker image tag for service: $SERVICE"
+                exit 1
+              fi
+
+              echo "Resolved image tag: $IMAGE_TAG"
+
+              docker image inspect "$IMAGE_TAG" > /dev/null
+
+              echo "Pushing image directly to registry: $IMAGE_TAG"
+              docker push "$IMAGE_TAG"
+              ;;
+
+            *)
+              echo "Pushing Tutor-managed image with Tutor: $SERVICE"
+              tutor images push "$SERVICE"
+              ;;
+          esac
 
       - name: Show image name for service
         if: ${{ inputs.USE_DYNAMIC_IMAGE_TAG }}

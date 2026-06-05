@@ -9,6 +9,7 @@ Keys:
     - "ecommerce": Ecommerce service
     - "ecommerce-worker": Ecommerce worker service
     - "enterprise-catalog": Enterprise catalog service
+    - "credentials": Credentials service
 
 Values:
     Environment variable names used to specify Docker images for each service.
@@ -22,4 +23,5 @@ service_tag_map = {
   "ecommerce": "ECOMMERCE_DOCKER_IMAGE",
   "ecommerce-worker": "ECOMMERCE_WORKER_DOCKER_IMAGE",
   "enterprise-catalog": "ENTERPRISE_CATALOG_DOCKER_IMAGE",
+  "credentials": "CREDENTIALS_DOCKER_IMAGE",
 }
